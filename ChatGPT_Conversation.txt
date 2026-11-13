@@ -1,0 +1,1241 @@
+ I want to make a website called Campus Connect using python and Drafter for my CISC 106 final project. The idea is to help students at UD see when their friends are free so they can plan stuff together without having to keep asking everyone.
+ 
+ 
+I want to start with a basic version first since im still learning python and dont want it to be too complicated. I already planned the idea in my part 0 and part 1 assignments so I want it to be similar to what I wrote there.
+ 
+ 
+I want the website to have 5 pages:
+ 
+ 
+1. Home - Let students sign in as Alex, Sam or Jordan and have buttons to go to the other pages.
+ 
+ 
+2. Calendar - Let students choose the days and times they are free and save it.
+ 
+ 
+3. Friends - Show their friends and when they are free so they can compare schedules.
+ 
+ 
+4. Suggest Activity - Let students choose a friend, activity like Coffee, Study, Gym or Food, and pick a day and time to invite them.
+ 
+ 
+5. Inbox - Show the invitations that their friends sent them.
+ 
+ 
+For example Alex signs in and marks Tuesday at 4pm as free. If Sam is also free then Alex can invite him to get coffee. Then when Sam signs in he can see the invitation in his inbox.
+ 
+ 
+I also need it to follow my professors requirements like having at least 7 routes, 5 pages, 4 State fields that actually change, another dataclass, 3 inputs, 3 if statements and a loop that goes through a list of dataclass objects.
+ 
+ 
+For my State fields I planned to use session, selected_day, available_slots and invitations. The other dataclass would be ActivityInvitation.
+ 
+ 
+Please keep the code simple and use basic python stuff like functions, lists, loops and if statements. I want to be able to understand the code and explain what everything does.
+ 
+ 
+For now just make the basic website with sample students and we can add more stuff later once everything works.
+ 
+ 
+Can you give me the full python code so I can copy and paste it into Thonny?
+ 
+…
+ 
+I’ll build the first version around your five pages and the State fields you already chose. I’ll also check Drafter’s actual function names so you can copy the code into Thonny, run it, and explain how it meets the rubric.
+ 
+ 
+ 
+Used Personal Context integration, ran a command, searched the web
+ 
+I found your earlier route names: index, calendar, friends, suggest, inbox, save_availability, and send_suggestion. I’m keeping those exact seven. The demo will remember each student’s free times and invitations while you switch between Alex, Sam, and Jordan in the same browser session.
+ 
+ 
+Ran command
+ 
+I’ve confirmed the form and button syntax against Drafter’s documentation. I’m now checking the finished code with Drafter itself, including the Alex → Sam invitation example, before I give you the version to paste into Thonny. I’ll also save a .py copy so you have both options.Can you just use the information I give you in this chat for now? I want to start with a basic version of Campus Connect and build it step by step so I can understand the code better. We can make changes and add more features later once the first version works.
+ 
+Assistant
+ 
+Absolutely, Stephen! We can do that.
+ 
+ 
+From now on, for your Campus Connect project, **I'll only use the information you provide in this conversation.** I won't look up your previous chats or use information from other assignments unless you share it here.
+ 
+ 
+And yes, when the earlier response said “Used Personal Context integration,” that indicates it accessed information from your previous conversations.
+ 
+ 
+### Here's how we'll work on Campus Connect:
+ 
+ 
+1. **Start simple:** Build the basic website using Python and Drafter.
+ 
+2. **Work step by step:** Make sure you understand each part of the code.
+ 
+3. **Test in Thonny:** Check that everything runs correctly before adding more.
+ 
+4. **Follow your professor's requirements:** Make sure the finished project meets the rubric you provided.
+ 
+5. **Add features gradually:** Improve the website together once the basic version works.
+ 
+ 
+We'll stick with your five pages:
+ 
+ 
+- Home
+ 
+- Calendar
+ 
+- Friends
+ 
+- Suggest Activity
+ 
+- Inbox
+ 
+ 
+We'll also use Alex, Sam, and Jordan as sample students.
+ 
+ 
+**Most importantly, I want you to understand the code well enough to explain it to your professor.**
+ 
+ 
+Would you like to start with **Step 1: Creating the Home page with a simple sign-in system** and then build the other pages one at a time?
+ 
+User
+ 
+Yes lets start, but can you make the basic version with all 5 pages first so I can copy it into Thonny and see how the website looks? Keep it simple for now and we can test it and make changes after.
+ 
+Assistant
+ 
+I’ll make one simple Python file with all five pages, using only the Campus Connect details you shared here. I’ll check the Drafter syntax and test what I can, then give you code to paste into Thonny.
+ 
+ 
+Drafter supports the dropdowns, routes, and dataclasses this needs. I’m keeping the first version functional but small: switching students, adding or removing free times, comparing schedules, and sending invitations when both people are free. Data will stay during navigation, but won’t be saved permanently yet.
+ 
+ 
+The five pages and the Alex → Sam invitation example passed the Python checks. I’m doing one final launch check and saving a downloadable `.py` copy alongside the code you can paste.
+ 
+ 
+Your first version of **Campus Connect** is ready! It has all five pages, and I tested that each page opens successfully with Drafter.
+ 
+ 
+5 pages working · 9 routes · Python tested
+ 
+ 
+You can download the Python file or copy the code below directly into Thonny.
+ 
+ 
+[campus_connect.py](https://chatgpt.com/library?file_id=libfile_562fa29469288191bfc03857676157d6&account_id=personal)
+ 
+ 
+Complete Python file · Drafter website
+ 
+ 
+## 1. Copy this code into Thonny
+ 
+ 
+```python
+ 
+from dataclasses import dataclass
+ 
+from drafter import *
+ 
+ 
+ 
+# Sample information for Campus Connect
+ 
+STUDENTS = ["Alex", "Sam", "Jordan"]
+ 
+DAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"]
+ 
+TIMES = ["10 AM", "12 PM", "2 PM", "4 PM", "6 PM"]
+ 
+ACTIVITIES = ["Coffee", "Study", "Gym", "Food"]
+ 
+ 
+ 
+@dataclass
+ 
+class ActivityInvitation:
+ 
+    sender: str
+ 
+    receiver: str
+ 
+    activity: str
+ 
+    day: str
+ 
+    time: str
+ 
+ 
+ 
+@dataclass
+ 
+class State:
+ 
+    session: str
+ 
+    selected_day: str
+ 
+    available_slots: dict[str, list[str]]
+ 
+    invitations: list[ActivityInvitation]
+ 
+ 
+ 
+def menu() -> list:
+ 
+    """Buttons that appear on every page."""
+ 
+    return [
+ 
+        Link("Home", "index"),
+ 
+        " | ",
+ 
+        Link("Calendar", "calendar"),
+ 
+        " | ",
+ 
+        Link("Friends", "friends"),
+ 
+        " | ",
+ 
+        Link("Suggest Activity", "suggest"),
+ 
+        " | ",
+ 
+        Link("Inbox", "inbox"),
+ 
+        "\n\n",
+ 
+    ]
+ 
+ 
+ 
+@route
+ 
+def index(state: State) -> Page:
+ 
+    return Page(state, [
+ 
+        Header("Campus Connect"),
+ 
+        "Find free time with your friends and make plans!\n",
+ 
+        "Signed in as: " + state.session + "\n\n",
+ 
+        "Choose a student:",
+ 
+        SelectBox("student", STUDENTS, state.session),
+ 
+        Button("Sign In", "sign_in"),
+ 
+        "\n\n",
+ 
+    ] + menu())
+ 
+ 
+ 
+@route
+ 
+def sign_in(state: State, student: str) -> Page:
+ 
+    state.session = student
+ 
+    return index(state)
+ 
+ 
+ 
+@route
+ 
+def calendar(state: State) -> Page:
+ 
+    saved = state.available_slots[state.session]
+ 
+    lines = [
+ 
+        Header("My Calendar"),
+ 
+        "Student: " + state.session + "\n",
+ 
+        "Choose a day:",
+ 
+        SelectBox("day", DAYS, state.selected_day),
+ 
+        "\n Choose a time:",
+ 
+        SelectBox("time", TIMES),
+ 
+        "\n",
+ 
+        Button("Add Free Time", "save_availability"),
+ 
+        Button("Remove Free Time", "remove_availability"),
+ 
+        "\n\nMy free times:\n",
+ 
+    ]
+ 
+ 
+    if len(saved) == 0:
+ 
+        lines.append("No free times added yet.\n")
+ 
+    else:
+ 
+        for slot in saved:
+ 
+            lines.append(slot + "\n")
+ 
+ 
+    return Page(state, menu() + lines)
+ 
+ 
+ 
+@route
+ 
+def save_availability(state: State, day: str, time: str) -> Page:
+ 
+    state.selected_day = day
+ 
+    slot = day + " at " + time
+ 
+ 
+    if slot not in state.available_slots[state.session]:
+ 
+        state.available_slots[state.session].append(slot)
+ 
+ 
+    return calendar(state)
+ 
+ 
+ 
+@route
+ 
+def remove_availability(state: State, day: str, time: str) -> Page:
+ 
+    state.selected_day = day
+ 
+    slot = day + " at " + time
+ 
+ 
+    if slot in state.available_slots[state.session]:
+ 
+        state.available_slots[state.session].remove(slot)
+ 
+ 
+    return calendar(state)
+ 
+ 
+ 
+@route
+ 
+def friends(state: State) -> Page:
+ 
+    lines = [Header("Friends"), "Your friends' free times:\n\n"]
+ 
+ 
+    for student in STUDENTS:
+ 
+        if student != state.session:
+ 
+            lines.append(Header(student, 3))
+ 
+            slots = state.available_slots[student]
+ 
+ 
+            if len(slots) == 0:
+ 
+                lines.append("No free times added yet.\n")
+ 
+            else:
+ 
+                for slot in slots:
+ 
+                    lines.append(slot + "\n")
+ 
+ 
+    return Page(state, menu() + lines)
+ 
+ 
+ 
+@route
+ 
+def suggest(state: State) -> Page:
+ 
+    other_students = []
+ 
+ 
+    for student in STUDENTS:
+ 
+        if student != state.session:
+ 
+            other_students.append(student)
+ 
+ 
+    return Page(state, menu() + [
+ 
+        Header("Suggest Activity"),
+ 
+        "Invite a friend to do something together.\n\n",
+ 
+        "Friend:",
+ 
+        SelectBox("friend", other_students),
+ 
+        "\n Activity:",
+ 
+        SelectBox("activity", ACTIVITIES),
+ 
+        "\n Day:",
+ 
+        SelectBox("day", DAYS, state.selected_day),
+ 
+        "\n Time:",
+ 
+        SelectBox("time", TIMES),
+ 
+        "\n",
+ 
+        Button("Send Invitation", "send_suggestion"),
+ 
+    ])
+ 
+ 
+ 
+@route
+ 
+def send_suggestion(state: State, friend: str, activity: str,
+ 
+                    day: str, time: str) -> Page:
+ 
+    slot = day + " at " + time
+ 
+ 
+    if slot not in state.available_slots[state.session]:
+ 
+        message = "You need to mark yourself free at that time first."
+ 
+ 
+    elif slot not in state.available_slots[friend]:
+ 
+        message = friend + " has not marked that time as free yet."
+ 
+ 
+    else:
+ 
+        invitation = ActivityInvitation(
+ 
+            state.session, friend, activity, day, time
+ 
+        )
+ 
+        state.invitations.append(invitation)
+ 
+        message = "Invitation sent to " + friend + " for " + activity + "!"
+ 
+ 
+    return Page(state, menu() + [
+ 
+        Header("Invitation Result"),
+ 
+        message,
+ 
+        "\n",
+ 
+        Button("Try Another Activity", "suggest"),
+ 
+    ])
+ 
+ 
+ 
+@route
+ 
+def inbox(state: State) -> Page:
+ 
+    lines = [
+ 
+        Header("Inbox"),
+ 
+        "Invitations for " + state.session + ":\n\n"
+ 
+    ]
+ 
+    found = False
+ 
+ 
+    # Loop through a list of ActivityInvitation objects
+ 
+    for invitation in state.invitations:
+ 
+        if invitation.receiver == state.session:
+ 
+            found = True
+ 
+            lines.append(
+ 
+                invitation.sender + " invited you to " +
+ 
+                invitation.activity + " on " + invitation.day +
+ 
+                " at " + invitation.time + ".\n"
+ 
+            )
+ 
+ 
+    if not found:
+ 
+        lines.append("You have no invitations yet.\n")
+ 
+ 
+    return Page(state, menu() + lines)
+ 
+ 
+ 
+# Start the website
+ 
+if __name__ == "__main__":
+ 
+    start_server(State(
+ 
+        "Alex",
+ 
+        "Monday",
+ 
+        {"Alex": [], "Sam": [], "Jordan": []},
+ 
+        []
+ 
+    ))
+ 
+```
+ 
+ 
+## 2. How to run it
+ 
+ 
+1. Open **Thonny**.
+ 
+2. Create a new Python file.
+ 
+3. Copy and paste all the code above.
+ 
+4. Save it as `campus_connect.py`.
+ 
+5. Click the green **Run** button (or press F5).
+ 
+6. Open the website in your browser if it doesn't appear automatically. The local address is usually `http://localhost:8000`.
+ 
+ 
+If Thonny says `No module named 'drafter'`, install `drafter` through **Tools → Manage packages**.
+ 
+ 
+## 3. Let's test the website
+ 
+ 
+Once it opens, try this example:
+ 
+ 
+1. **Sign in as Alex**
+ 
+ 
+   On Calendar, select Tuesday and 4 PM. Click Add Free Time.
+ 
+2. **Switch to Sam**
+ 
+ 
+   Return Home, choose Sam, and click Sign In. Add Tuesday at 4 PM to Sam's calendar too.
+ 
+3. **Switch back to Alex**
+ 
+ 
+   Open Suggest Activity. Choose Sam, Coffee, Tuesday, and 4 PM. Send the invitation.
+ 
+4. **Check Sam's Inbox**
+ 
+ 
+   Sign in as Sam again and open Inbox. You should see Alex's coffee invitation.
+ 
+ 
+## 4. What's included so far?
+ 
+ 
+| Professor's requirement | First version |
+ 
+|---|---|
+ 
+| At least 5 pages | 5 pages |
+ 
+| At least 7 routes | 9 routes |
+ 
+| 4 State fields | 4 fields |
+ 
+| Another dataclass | ActivityInvitation |
+ 
+| At least 3 inputs | Multiple dropdowns |
+ 
+| At least 3 if statements | Included |
+ 
+| Loop through dataclass objects | Inbox loop |
+ 
+ 
+One limitation for now: this is a demonstration with sample accounts, not a real online account system. Free times and invitations remain available while you navigate the website, but reloading the tab resets the data. <Cite ref="turn1view1"/>
+ 
+ 
+**Your next step:** Paste the code into Thonny and run it. Once you see the website, send me a screenshot or tell me what happens. Then we'll make changes together, one at a time, so you understand what each part does.
+ 
+User
+ 
+This looks good for the first version. Before adding any new features can you make sure the code follows all my professors requirements? I noticed it still needs docstrings, unit tests and set_site_information. Also can you fix it so it doesnt send duplicate invitations and shows when friends are both free? Keep everything simple and dont change the main idea of the website.
+ 
+Assistant
+ 
+I’ll update the existing Campus Connect file without changing its five-page structure. I’ll check Drafter’s exact syntax for site information and tests, add docstrings, prevent duplicate invitations, and show shared free times on the Friends page. Then I’ll run the checks and save the revised file.
+ 
+ 
+I confirmed that `set_site_information` needs five pieces of information: author, description, sources, planning, and links. The duplicate check and shared-time display can fit into the existing code, so there’s no need to add pages or State fields. I’ll also add tests for those two behaviors.
+ 
+ 
+The revised code passed 16 Drafter unit checks, including shared free times and duplicate-invitation prevention. I also kept the tests separate from the website’s starting data, so running them won’t fill the real demo with sample invitations. I’m checking the five pages once more before updating your file.
+ 
+ 
+Done! I've updated Campus Connect to address the professor's requirements you've shared, while keeping the same five pages and simple Python structure.
+ 
+ 
+[Download Updated Campus Connect](https://chatgpt.com/library?file_id=libfile_562fa29469288191bfc03857676157d6&account_id=personal)
+ 
+ 
+Updated Python file · Ready for Thonny · Tested
+ 
+ 
+## 1. What I fixed
+ 
+ 
+**Added docstrings**
+ 
+ 
+Every function and dataclass now has a short explanation of what it does.
+ 
+ 
+**Added unit tests**
+ 
+ 
+The program automatically runs 16 Drafter checks when launched, covering pages, sign-in, calendars, invitations, and shared availability.
+ 
+ 
+**Added `set_site_information()`**
+ 
+ 
+Includes the website description, sources, planning information, and author field.
+ 
+ 
+**Prevented duplicate invitations**
+ 
+ 
+If Alex sends Sam the exact same invitation twice, only one invitation is saved. Alex receives a message that it was already sent.
+ 
+ 
+**Added matching free times**
+ 
+ 
+The Friends page now compares schedules and displays a separate section labeled *Times you are both free* for each friend.
+ 
+ 
+## 2. Professor's requirements checklist
+ 
+ 
+| Requirement | Result |
+ 
+|---|---|
+ 
+| 5 pages | 5 |
+ 
+| At least 7 routes | 9 |
+ 
+| 4 State fields that change | 4 |
+ 
+| Additional dataclass | ActivityInvitation |
+ 
+| At least 3 inputs | 7 dropdowns |
+ 
+| At least 3 if statements | Passed |
+ 
+| Loop through dataclass objects | Included |
+ 
+| Function docstrings | Included |
+ 
+| Unit tests | 16 passed |
+ 
+| `set_site_information()` | Included |
+ 
+ 
+**Verification completed**
+ 
+ 
+All 16 unit checks passed. I also launched the website and confirmed that all five pages load successfully.
+ 
+ 
+## 3. What you need to do
+ 
+ 
+1. Download the updated Python file.
+ 
+2. Open it in Thonny, replacing the older version.
+ 
+3. Near the top, change `"Your Name"` in `set_site_information()` to your actual name.
+ 
+4. Run the program using F5.
+ 
+ 
+You should see the successful test messages in Thonny before the website starts.
+ 
+ 
+**One important note:** I verified the requirements you've listed in this conversation. If your professor's full rubric includes additional requirements, send it to me and I'll check those too.
+ 
+ 
+We haven't changed the main idea of Campus Connect, and permanent data saving is still left for a later version.
+ 
+User
+ 
+I like the basic version but I think the website could be improved more. Can you suggest some features and design improvements that would make Campus Connect more useful and look more like an actual website?
+ 
+Assistant
+ 
+I’ll suggest improvements that make Campus Connect feel more complete while staying manageable in Python and Drafter. I’ll focus on features worth adding next and a cleaner layout. I won’t change the code yet.
+ 
+ 
+I think Campus Connect has a good foundation, but the next version should feel more like a real college scheduling website. Right now, most pages are mainly text, dropdowns, and buttons. We can make it much more useful and visually appealing while keeping the Python code understandable.
+ 
+ 
+I'd recommend improving both the **appearance** and **functionality**, especially the Calendar, Friends, and Inbox pages.
+ 
+ 
+## 1. Features I recommend adding
+ 
+ 
+**1. Interactive weekly calendar**
+ 
+Highest priority
+ 
+ 
+Instead of selecting a day and time from two dropdowns, display a weekly calendar with time slots. Students could click a slot to mark themselves free, and free times would appear green.
+ 
+ 
+Difficulty: Medium
+ 
+ 
+**2. Better friend schedule comparison**
+ 
+ 
+Let students select a friend and view matching availability in one place. For example, if Alex and Sam are both free Tuesday at 4 PM, the website could highlight that time and provide an Invite button.
+ 
+ 
+Difficulty: Easy–Medium
+ 
+ 
+**3. Accept and decline invitations**
+ 
+ 
+Make the Inbox more interactive. Sam could accept or decline Alex's invitation, and Alex could see the invitation's current status.
+ 
+ 
+Pending · Accepted · Declined
+ 
+ 
+Difficulty: Medium
+ 
+ 
+**4. Home dashboard**
+ 
+ 
+Make Home display useful information, not just navigation:
+ 
+ 
+- Signed-in student
+ 
+- Number of saved free times
+ 
+- Pending invitations
+ 
+- Upcoming accepted activities
+ 
+ 
+Difficulty: Easy–Medium
+ 
+ 
+**5. More detailed activity invitations**
+ 
+ 
+Allow students to include a location and optional message. For example: Coffee at Trabant Student Center, Tuesday at 4 PM.
+ 
+ 
+Difficulty: Easy
+ 
+ 
+**6. Invitation notifications**
+ 
+ 
+Display a notification on Home when a student receives an invitation, such as "You have 2 new invitations."
+ 
+ 
+Difficulty: Easy
+ 
+ 
+## 2. Design improvements
+ 
+ 
+**A cleaner dashboard design**
+ 
+ 
+Use a navy-blue and gold color scheme, with a white background and separate sections for schedules, invitations, and friends. This would give Campus Connect a more recognizable college-themed look.
+ 
+ 
+**A visual calendar**
+ 
+ 
+A proper calendar grid would make it easier to see schedules at a glance. Use consistent colors for available, unavailable, and matching times.
+ 
+ 
+**Invitation cards**
+ 
+ 
+Instead of displaying each invitation as a sentence, show a card with the sender, activity, day, time, and response buttons.
+ 
+ 
+These are visual references for the direction I'd recommend, not previews of your actual Python app.
+ 
+ 
+The good news is that Drafter supports built-in themes, tables, and layout components such as `Row` and `Div`. We can use those to improve the design without immediately introducing complicated front-end programming. <Cite refs={["turn5search0","turn5search2","turn5search10"]}/>
+ 
+ 
+## 3. What should we improve first?
+ 
+ 
+Here's my suggested order:
+ 
+ 
+Choose which improvements to include in the next version. I've selected the five I'd recommend.
+ 
+ 
+Modern website styling
+ 
+Navy/gold colors, better navigation, spacing, and page sections.
+ 
+ 
+Weekly calendar grid
+ 
+A clickable schedule that's easier to understand.
+ 
+ 
+Better friend comparisons
+ 
+Highlight overlapping availability and make inviting easier.
+ 
+ 
+Invitation responses
+ 
+Add Accept, Decline, and Pending statuses.
+ 
+ 
+Home dashboard
+ 
+Show useful information as soon as someone signs in.
+ 
+ 
+Activity details
+ 
+Optional messages and meeting locations.
+ 
+ 
+Build selected improvements
+ 
+ 
+My recommendation is to make the **calendar and invitation system the centerpiece of Campus Connect**. Those are what make the website genuinely useful, while the styling and dashboard will make it look like a finished project.
+ 
+ 
+We can keep the same five pages, nine routes if possible, and four State fields, adding only the code necessary for the improvements you choose.
+ 
+User
+ 
+I like your suggestions. Lets add the interactive weekly calendar, better friends comparison, accept and decline invitations, home dashboard and the modern blue and gold design. I think we can leave the extra activity details for later. I want to focus on making the main features work first.
+ 
+Assistant
+ 
+I’ll add those five improvements to the existing Drafter project and leave activity details for later. I’ll keep the same five pages and four State fields, update the tests for the new behavior, and verify the site before giving you the revised Thonny file.
+ 
+ 
+The main design is settled: a clickable Monday–Sunday calendar, a side-by-side schedule comparison, invitation status buttons, and dashboard summaries. I’m keeping invitation responses and calendar changes inside the existing dataclasses so the project still uses the Python concepts you’ve been practicing.
+ 
+ 
+The updated logic passes 27 checks. The calendar can toggle time slots, the Friends page identifies shared times, and invitation responses update their status without creating duplicates. I’m checking how those controls render in the website now, then I’ll save the updated file.
+ 
+ 
+The new version is ready to save. It passes all 27 checks and still has five pages, four State fields, docstrings, and `set_site_information()`. You’ll be able to download it as one Python file for Thonny.
+ 
+ 
+I've updated **Campus Connect** with all five improvements you selected! The website keeps its original five pages, but now has a more complete scheduling and invitation system.
+ 
+ 
+[Download Updated Campus Connect](https://chatgpt.com/library?file_id=libfile_562fa29469288191bfc03857676157d6&account_id=personal)
+ 
+ 
+Complete Python and Drafter program for Thonny
+ 
+ 
+27 tests passed · 5 pages · 12 routes · 4 State fields
+ 
+ 
+## What's new?
+ 
+ 
+| Page | Improvements |
+ 
+|---|---|
+ 
+| Home | Dashboard showing free time slots, pending invitations, and accepted plans |
+ 
+| Calendar | Clickable Monday–Sunday calendar; green slots indicate availability |
+ 
+| Friends | Compare two schedules in a table, highlight shared free times, and invite directly |
+ 
+| Suggest Activity | Automatically fills in the friend and time when coming from Friends |
+ 
+| Inbox | Accept or decline invitations, see their status, and check sent invitations |
+ 
+ 
+The website also has a navy-blue and gold design, navigation bar, cleaner page sections, and invitation cards.
+ 
+ 
+## Let's test the new features
+ 
+ 
+1. Sign in as **Alex** and open Calendar. Click Tuesday at 4 PM. The cell should turn green.
+ 
+2. Switch to **Sam** and mark Tuesday at 4 PM as free.
+ 
+3. Switch back to **Alex**. Open Friends and compare with Sam. Tuesday at 4 PM should show that both are free.
+ 
+4. Click **Invite Sam**, choose Coffee, and send the invitation.
+ 
+5. Sign in as **Sam**, open Inbox, and click Accept.
+ 
+6. Return to **Alex**. The invitation should show Accepted, and the Home dashboard should count the accepted plan.
+ 
+ 
+## Running it in Thonny
+ 
+ 
+1. Download the updated `.py` file.
+ 
+2. Open it in Thonny.
+ 
+3. Replace `"Your Name"` in `set_site_information()` with your name.
+ 
+4. Press **F5** to run.
+ 
+ 
+I verified the Python logic with 27 passing checks, including availability changes, invitations, accepting and declining, and duplicate prevention. I couldn't inspect the finished visual layout in a live browser here, so **send me a screenshot after running it in Thonny**. We can adjust the design if something looks off.
+ 
+ 
+One limitation remains: this is still a prototype using sample students. Data stays available while navigating the app, but it isn't permanently saved or shared between separate devices.
+ 
+ 
+For now, we've left out additional activity details, as requested.
+ 
+User
+ 
+The weekly calendar looks better, but I noticed a problem with the time slots. Some of the times, like 4 PM, have a black background or dark text that makes them hard to read. Can you fix the colors so all the times are clearly visible, whether a slot is free or not? Also, can you add more time slots throughout the day, maybe from 8 AM to 10 PM, so students have more options when choosing when they're free?
+ 
+Assistant
+ 
+I’ll make two focused changes: add hourly slots from 8 AM through 10 PM, and give the calendar cells and buttons explicit light backgrounds and readable text colors. I’ll keep the rest of Campus Connect unchanged, rerun the tests, and save an updated Python file for Thonny.
+ 
+ 
+The calendar now has 15 hourly choices per day, from 8 AM through 10 PM. All 31 tests pass. I’ve also added explicit colors for the time labels and both button states, including hover, so the theme should no longer make them hard to read. I’m doing the final launch check now.
+ 
+ 
+Fixed! I've updated the calendar colors and expanded the available times without changing the rest of Campus Connect.
+ 
+ 
+[Download Updated Campus Connect](https://chatgpt.com/library?file_id=libfile_562fa29469288191bfc03857676157d6&account_id=personal)
+ 
+ 
+Updated Python file for Thonny · 31 tests passed
+ 
+ 
+## 1. Improved calendar colors
+ 
+ 
+The calendar now uses consistent, high-contrast colors:
+ 
+ 
+4 PM — Time label
+ 
+Free — Available
+ 
++ Add — Not selected
+ 
+ 
+The time labels also stay visible when you scroll horizontally through the calendar.
+ 
+ 
+## 2. Expanded time slots
+ 
+ 
+EARLIEST TIME
+ 
+8:00 AM
+ 
+ 
+LATEST TIME
+ 
+10:00 PM
+ 
+ 
+Hourly intervals, Monday–Sunday · 105 selectable slots
+ 
+ 
+Students can now select any hour from 8 AM through 10 PM, including 9 AM, 11 AM, 1 PM, 3 PM, 5 PM, 7 PM, and 9 PM.
+ 
+ 
+## 3. Testing results
+ 
+ 
+- All 31 unit tests passed.
+ 
+- Website launches successfully.
+ 
+- Calendar includes all 15 hourly rows.
+ 
+- Existing invitation and friend features remain unchanged.
+ 
+ 
+**Next:** Download the updated file, open it in Thonny, and press F5. If the previous version is still running, stop it first.
+ 
+ 
+I couldn't visually inspect the browser rendering here, so if any cells still appear black or hard to read on your Mac, send me a screenshot and I'll adjust the exact styling.
+ 
+User
+ 
+I tested Campus Connect in Thonny and theres a few things that need to be fixed.
+ 
+ 
+1. The website shows like 6 errors, including something about the theme "simple" and configuration updates. Can you figure out whats causing them and fix it?
+ 
+ 
+2. When I switch between pages I sometimes get warnings about inputs like student and friend being sent to the wrong pages. Can you fix that too?
+ 
+ 
+3. The calendar is too wide and Sunday gets cut off. Can you make it so all the days are visible or I can scroll sideways easily? Also keep the times and days visible when scrolling.
+ 
+ 
+4. The website shows a debug console and test results. Can you make the actual website look cleaner without removing the tests?
+ 
+ 
+Keep all the features we already added and the blue and gold design. Also make sure accepting and declining invites work and people cant send duplicate invites.
+ 
+Assistant
+ 
+I’ll trace the configuration and navigation warnings in the current Drafter code, then fix the calendar scrolling and clean viewing mode. I’ll keep the five pages and existing features, and test the invitation rules again before updating the downloadable file.
+ 
+ 
+I found the likely cause of the errors: Drafter is sending configuration-change events when the script sets the site information and theme, and its browser code doesn’t handle all of those events. I’m moving that setup into Drafter’s startup options so the same title, information, and blue-and-gold styling load without those updates.
+ 
+ 
+The updated code passes 36 checks, including shared availability, duplicate prevention, and accepting or declining invitations. I also confirmed the site title, metadata, and clean-view settings load correctly. I’m doing one final startup check, then I’ll update the downloadable Python file.
+ 
+ 
+I've updated Campus Connect and fixed the issues you reported while keeping all five pages, the blue-and-gold design, and the existing features.
+ 
+ 
+### [Download the updated Campus Connect Python file](https://chatgpt.com/library?file_id=libfile_562fa29469288191bfc03857676157d6&account_id=personal)
+ 
+ 
+Here's what I changed:
+ 
+ 
+| Problem | Fix |
+ 
+|---|---|
+ 
+| **Drafter errors** | Moved the site information and title into Drafter's startup settings and removed the problematic `simple` theme setting. |
+ 
+| **Navigation warnings** | Added a navigation route that handles leftover form inputs when switching pages. |
+ 
+| **Sunday getting cut off** | Added a horizontally scrollable calendar with a visible scrolling hint. |
+ 
+| **Days and times disappearing** | Made the weekday headings and time labels stay visible while scrolling. |
+ 
+| **Debug console** | Turned off the website's debug panel while keeping the unit tests in the Python file. |
+ 
+ 
+I also checked the invitation system again:
+ 
+ 
+- Students must both be free before an invitation can be sent.
+ 
+- Duplicate invitations are blocked.
+ 
+- Only the invited student can accept or decline.
+ 
+- Accepted invitations cannot accidentally be changed to declined.
+ 
+- The sender can see the invitation's updated status.
+ 
+ 
+**Testing:** All 36 automated checks passed, and the Drafter server started successfully in my environment. I couldn't verify the final appearance in your Mac's browser, so that's the next thing to check.
+ 
+ 
+### What to do in Thonny
+ 
+ 
+1. Download the updated file.
+ 
+2. Open it in Thonny.
+ 
+3. Stop the previous version if it's still running.
+ 
+4. Press **F5** to run the updated website.
+ 
+5. Check the Calendar, navigation, and Inbox.
+ 
+ 
+One note: I used Drafter's startup configuration to provide the same information as `set_site_information()`. This avoids the configuration warnings, but we should confirm whether your professor requires that exact function call.
+ 
+ 
+**Let me know how this version looks in Thonny**, especially whether the six errors are gone and Sunday is easier to access.
+ 
+User
+ 
+The website is working better now but theres still one problem with the calendar. When I scroll right to Sunday the time labels disappear, and when I scroll down the days at the top disappear too. Can you make both stay visible while scrolling?Can you also check in developer mode that the old Drafter errors and navigation warnings are actually gone and not just hidden?
+ 
+Assistant
+ 
+I’ll fix the calendar’s sticky row and column, then check the page in a browser with debugging enabled so we can tell whether the old Drafter errors are really gone. I’ll keep the rest of Campus Connect unchanged and update the same Python file. I’m using the browser-control and file-saving workflows for those checks.
+ 
+ 
+The current calendar uses sticky table cells, but that hasn’t kept the labels visible in your browser. I’m changing just the calendar layout to a grid with a fixed top row and left column inside one scrolling area. That should make the time labels and day headings stay in place together.
+ 
+ 
+I reproduced the problem in the currently running website: after scrolling to the bottom-right, the time column and weekday headings move out of view even though their styles say “sticky.” That confirms the table layout is the issue. In Chrome’s developer logs, I found no Drafter theme/configuration errors or form-field warnings during navigation—only an unrelated browser-extension warning. The new grid code passes the existing tests; I still need you to run that version on your Mac for the final visual check.
+ 
+ 
+I fixed the calendar layout and updated your Campus Connect file. The new version uses a scrolling grid designed to keep both the time labels and weekday headings visible.
+ 
+ 
+### [Download the updated Campus Connect code](https://chatgpt.com/library?file_id=libfile_562fa29469288191bfc03857676157d6&account_id=personal)
+ 
+ 
+### What I fixed
+ 
+ 
+- **Time labels:** The left column stays in place when scrolling toward Sunday.
+ 
+- **Weekday headings:** The top row stays in place when scrolling toward 10 PM.
+ 
+- **Calendar scrolling:** Both directions now use the same scrolling area.
+ 
+- **Existing features:** The five pages, invitations, schedule comparisons, and blue-and-gold design are preserved.
+ 
+ 
+### Developer checks
+ 
+ 
+I inspected your currently running website in Chrome.
+ 
+ 
+- I reproduced the original calendar problem.
+ 
+- No Drafter configuration or theme errors appeared in the developer logs.
+ 
+- No unrelated form-field warnings appeared when navigating between pages.
+ 
+- All **41 Python tests passed** on the updated code.
+ 
+ 
+The new grid still needs a visual check in your browser after you run the updated file.
+ 
+ 
+### How to run the updated version in Thonny
+ 
+ 
+1. Download the Python file above.
+ 
+2. In Thonny, select **File → Open** and choose the downloaded file.
+ 
+3. If you have an unsaved program, save it first using **File → Save As** so you don't lose your work.
+ 
+4. Stop the old program.
+ 
+5. Press **F5** to launch the updated website.
+ 
+ 
+Then open Calendar and scroll all the way to **Sunday at 10 PM**.
+ 
+ 
+You should be able to see both **Sunday** at the top and **10 PM** on the left. If either disappears, send me a screenshot of that corner and I'll help finish the adjustment.
+ 
+User
+ 
+The main Calendar now works correctly, including pinned time labels and weekday headings at Sunday, 10 PM.Apply the same working scrolling layout to the Friends & Availability comparison. Its time labels still disappear when scrolling sideways toward Sunday. Keep the first column and weekday headings visible while scrolling, and verify the bottom-right corner in a browser. Preserve the working calendar and invitation features. Do not add unrelated features.Remove the text “Scroll sideways to see all seven days (including Sunday).” above the calendar. Keep sideways scrolling and the pinned time labels and weekday headings working. Do not change anything else.also can you make the docstrings more detailed and easy to understand. explain what each function does, what the parameters mean, what it returns, and if it changes anything in the app. explain the dataclasses and their fields too. keep it in simple words and dont change how the code works.
+ 
+Assistant
+ 
+I’ll reuse the working Calendar grid for Friends & Availability, remove that one instruction line, and expand the docstrings in simple language. Then I’ll run the tests and check Sunday at 10 PM in the browser. I’m using the browser-checking and file-saving workflows to update the same Python file.
+ 
+ 
+The Friends comparison now uses the same grid classes and scrolling area as the working Calendar. I removed the instruction line and expanded the docstrings for every function and both dataclasses. All 46 checks pass, including new checks for the Friends grid. I’m checking the bottom-right corner in a browser next.
+ 
+ 
+I've updated Campus Connect with all three changes you requested.
+ 
+ 
+### [Download the updated Campus Connect Python file](https://chatgpt.com/library?file_id=libfile_562fa29469288191bfc03857676157d6&account_id=personal)
+ 
+ 
+### What's changed
+ 
+ 
+1. **Friends & Availability:** Now uses the same scrolling grid as the working Calendar. The weekday headings stay at the top, and the time labels stay on the left when scrolling toward Sunday.
+ 
+2. **Calendar:** Removed the sentence about scrolling sideways. The scrolling functionality remains unchanged.
+ 
+3. **Docstrings:** Expanded the explanations for every function and both dataclasses. They now explain:
+ 
+   - What the function does
+ 
+   - What each parameter means
+ 
+   - What it returns
+ 
+   - Whether it changes any saved information
+ 
+ 
+I kept the explanations simple so you can understand and explain the code for CISC 106.
+ 
+ 
+### Testing
+ 
+ 
+**All 46 automated checks passed**, including new checks for the Friends grid.
+ 
+ 
+I also started the updated Drafter server successfully. However, the browser couldn't connect to that local server, so I couldn't visually verify the new Friends layout at Sunday, 10 PM. The code uses the same grid and sticky-label styling as the Calendar you confirmed works.
+ 
+ 
+### Next step
+ 
+ 
+Download the updated file, open it in Thonny, and press **F5**.
+ 
+ 
+Go to **Friends**, then scroll right and down to **Sunday at 10 PM**.
+ 
+ 
+Everything else—including invitations, accepting and declining, duplicate prevention, and the blue-and-gold design—has been preserved.
+ 
+User
+ 
+copy the whole chat put it into a document 
